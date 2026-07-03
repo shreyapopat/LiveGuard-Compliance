@@ -1,0 +1,58 @@
+digraph LiveGuard {
+  rankdir=TB;
+  fontname="Helvetica";
+  node [fontname="Helvetica", fontsize=11, shape=box, style="rounded,filled", color="#223652", fillcolor="#F4F8FA", margin="0.18,0.12"];
+  edge [fontname="Helvetica", fontsize=9, color="#5A7189", fontcolor="#3A4C5E"];
+  bgcolor="white";
+  splines=ortho;
+  nodesep=0.45;
+  ranksep=0.55;
+
+  subgraph cluster_agent {
+    label="Agent Browser Tab";
+    fontsize=12; fontname="Helvetica-Bold"; color="#16C7A6"; style="rounded"; bgcolor="#EAFBF7";
+    A1 [label="getUserMedia (mic)"];
+    A2 [label="Web Speech API\n(streaming STT)"];
+    A3 [label="Compliance Sidebar UI\nchecklist + live nudges", fillcolor="#D3F5EC"];
+  }
+
+  subgraph cluster_customer {
+    label="Customer Browser Tab";
+    fontsize=12; fontname="Helvetica-Bold"; color="#F2A93B"; style="rounded"; bgcolor="#FEF6E9";
+    C1 [label="getUserMedia (mic)"];
+    C2 [label="Web Speech API\n(streaming STT)"];
+  }
+
+  subgraph cluster_server {
+    label="LiveGuard Server (Node.js)";
+    fontsize=12; fontname="Helvetica-Bold"; color="#223652"; style="rounded"; bgcolor="#EDF2F7";
+    WS [label="WebSocket Session Layer\nsignaling relay + transcript ingestion", fillcolor="#DCE7F0"];
+    RE [label="Deterministic Rule Engine\n5 disclosure / conduct rules"];
+    LLM [label="LLM Soft-Signal Detector\nsentiment / mis-selling phrases"];
+    SUM [label="Risk Scoring +\nSummary Generator"];
+    API [label="REST API\n/api/calls  /api/rules"];
+  }
+
+  subgraph cluster_db {
+    label="PostgreSQL";
+    fontsize=12; fontname="Helvetica-Bold"; color="#6D2E46"; style="rounded"; bgcolor="#FBEFF3";
+    DB [label="calls · transcript_events\ncompliance_events · nudges\ncall_summaries · compliance_rules", shape=cylinder, fillcolor="#F3D9E3"];
+  }
+
+  SUP [label="Supervisor Dashboard\n(post-call review)", shape=ellipse, fillcolor="#F4F8FA"];
+
+  A1 -> C1 [label="WebRTC audio (P2P)", dir=both, color="#16C7A6", fontcolor="#0E7A63"];
+  A2 -> WS [label="final agent\ntranscript chunks"];
+  C2 -> WS [label="final customer\ntranscript chunks"];
+  WS -> RE [label="agent text"];
+  WS -> LLM [label="customer text"];
+  RE -> WS [label="checklist + nudges", color="#16C7A6", fontcolor="#0E7A63"];
+  LLM -> WS [label="risk-phrase nudges", color="#E5484D", fontcolor="#B23237"];
+  WS -> A3 [label="push over WebSocket", color="#16C7A6", fontcolor="#0E7A63"];
+  RE -> DB;
+  LLM -> DB;
+  WS -> SUM [label="on call end"];
+  SUM -> DB;
+  API -> DB [dir=both];
+  SUP -> API [label="GET /api/calls/:id", dir=both];
+}

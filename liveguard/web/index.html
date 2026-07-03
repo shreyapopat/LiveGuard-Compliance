@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LiveGuard — Real-Time Compliance Co-Pilot</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============ LANDING / ROLE PICKER ============ -->
+  <section id="landing" class="screen">
+    <div class="landing-inner">
+      <div class="brand">
+        <span class="brand-mark">◆</span>
+        <span class="brand-name">LiveGuard</span>
+      </div>
+      <h1>A compliance co-pilot that listens <em>during</em> the call, not after it.</h1>
+      <p class="sub">Two-party WebRTC call simulator for BFSI sales calls. Pick a role to join — open the other role in a second tab to place the call.</p>
+
+      <div class="role-cards">
+        <button class="role-card" data-role="agent">
+          <span class="role-icon">🎧</span>
+          <span class="role-title">Join as Agent</span>
+          <span class="role-desc">See the live compliance checklist and real-time nudges.</span>
+        </button>
+        <button class="role-card" data-role="customer">
+          <span class="role-icon">🗣️</span>
+          <span class="role-title">Join as Customer</span>
+          <span class="role-desc">Simulates the customer side of the call.</span>
+        </button>
+      </div>
+
+      <div class="landing-config">
+        <label>Call ID <span class="hint">(share the same ID between both tabs)</span>
+          <input id="callIdInput" type="text" placeholder="auto-generated if left blank" />
+        </label>
+        <label>Product type
+          <select id="productTypeInput">
+            <option value="loan">Personal Loan</option>
+            <option value="insurance">Insurance Policy</option>
+            <option value="credit_card">Credit Card</option>
+          </select>
+        </label>
+      </div>
+      <p class="disclaimer">Mic access + Chrome/Edge recommended (uses the Web Speech API for live transcription). Scoped demo — see README for what's simulated vs. real.</p>
+    </div>
+  </section>
+
+  <!-- ============ AGENT VIEW ============ -->
+  <section id="agentView" class="screen hidden">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">◆</span><span class="brand-name">LiveGuard</span></div>
+      <div class="call-meta">
+        <span id="callStatusBadge" class="badge badge-connecting">connecting…</span>
+        <span id="callTimer" class="timer">00:00</span>
+        <span id="callIdLabel" class="call-id-label"></span>
+      </div>
+      <button id="endCallBtn" class="btn btn-danger">End Call</button>
+    </header>
+
+    <main class="agent-grid">
+      <div class="transcript-pane">
+        <h2>Live Transcript <span class="stt-tag">Web Speech API</span></h2>
+        <div id="transcriptLog" class="transcript-log"></div>
+      </div>
+
+      <aside class="sidebar">
+        <div class="sidebar-block">
+          <h2>Compliance Checklist</h2>
+          <div id="checklist" class="checklist"></div>
+          <div class="risk-meter">
+            <div class="risk-meter-label">Disclosures confirmed</div>
+            <div class="risk-meter-track"><div id="riskMeterFill" class="risk-meter-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="sidebar-block">
+          <h2>Live Nudges</h2>
+          <div id="nudgeFeed" class="nudge-feed">
+            <p class="empty-state">No nudges yet — nudges appear here the moment a rule needs attention.</p>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </section>
+
+  <!-- ============ CUSTOMER VIEW ============ -->
+  <section id="customerView" class="screen hidden">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">◆</span><span class="brand-name">LiveGuard</span></div>
+      <div class="call-meta">
+        <span id="custStatusBadge" class="badge badge-connecting">connecting…</span>
+        <span id="custCallTimer" class="timer">00:00</span>
+      </div>
+      <button id="custEndCallBtn" class="btn btn-danger">End Call</button>
+    </header>
+    <main class="customer-main">
+      <div class="customer-card">
+        <p class="customer-instructions">You're simulating the customer. Speak naturally — try lines like:</p>
+        <ul class="sample-lines">
+          <li>"Hi, I'm calling about the personal loan I applied for."</li>
+          <li>"Wait, I'm honestly not sure I can afford this right now."</li>
+          <li>"Is this return really guaranteed, no risk at all?"</li>
+          <li>"Okay, that makes sense, please go ahead."</li>
+        </ul>
+        <div id="custTranscript" class="transcript-log small"></div>
+      </div>
+    </main>
+  </section>
+
+  <!-- ============ POST-CALL SUMMARY MODAL ============ -->
+  <div id="summaryModal" class="modal hidden">
+    <div class="modal-card">
+      <h2>Call Summary — Post-Call Artifact</h2>
+      <div class="risk-badge-row">
+        <span id="summaryRiskBand" class="risk-badge">—</span>
+        <span id="summaryRiskScore" class="risk-score">—</span>
+      </div>
+      <p id="summaryText" class="summary-text"></p>
+      <p class="summary-note">Stored to <code>calls</code> + <code>call_summaries</code> for supervisor review.</p>
+      <button id="closeSummaryBtn" class="btn btn-primary">Close</button>
+    </div>
+  </div>
+
+<script src="app.js"></script>
+</body>
+</html>

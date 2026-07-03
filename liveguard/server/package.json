@@ -1,0 +1,23 @@
+{
+  "name": "liveguard-server",
+  "version": "1.0.0",
+  "description": "LiveGuard — real-time compliance co-pilot server (signaling + rules engine + persistence)",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "db:init": "psql \"$DATABASE_URL\" -f ../db/schema.sql"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.17.0",
+    "pg": "^8.11.5",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "uuid": "^9.0.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
